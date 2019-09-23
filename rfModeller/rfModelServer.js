@@ -1,3 +1,26 @@
+/*
+* Copyright 2018, 2019 Andrew Antes, Andrew Bossie, Justin Kistler,
+* Wyatt Draggoo, Maigan Sedate
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
+
 "use strict";
 
 var util = require("util");
@@ -37,7 +60,9 @@ if (process.argv.indexOf("-c") != -1) {
 
 if (process.argv.indexOf("-p") != -1) {
   if (process.argv.indexOf("-s") == -1) {
-    console.log("Option -p is only effective with the -s switch to start the server.");
+    console.log(
+      "Option -p is only effective with the -s switch to start the server."
+    );
   } else {
     if (process.argv[process.argv.indexOf("-p") + 1] != -1) {
       if (process.argv[process.argv.indexOf("-p") + 1].match(/^[1-9][0-9]*$/)) {
@@ -79,10 +104,10 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
   if (!typeof p[mockup.pattern]) {
     console.log(
       "Pattern '" +
-      mockup.pattern +
-      "' not implemented! Skipping " +
-      mockup.name +
-      "."
+        mockup.pattern +
+        "' not implemented! Skipping " +
+        mockup.name +
+        "."
     );
     return;
   }
@@ -117,13 +142,12 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
     if (!(currFile in dirty)) {
       try {
         dirty[currFile] = JSON.parse(
-          fs.readFileSync(
-            config.RedFishData.path + currFile,
-            "utf-8"
-          )
+          fs.readFileSync(config.RedFishData.path + currFile, "utf-8")
         );
       } catch (err) {
-        console.log("Error opening " + config.RedFishData.path + currFile + ": " + err);
+        console.log(
+          "Error opening " + config.RedFishData.path + currFile + ": " + err
+        );
       }
     } else {
       console.log(currFile + " found in dirty cache.");
@@ -152,11 +176,11 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
 
     console.log(
       isoDTG +
-      ": " +
-      mockup.name +
-      "(" +
-      patternTimers[index].pfuncs.value +
-      ")"
+        ": " +
+        mockup.name +
+        "(" +
+        patternTimers[index].pfuncs.value +
+        ")"
     );
   }, mockup.timedelay * 1000);
 });
@@ -191,8 +215,8 @@ var writeDirtyFilesTimer = setInterval(function() {
         );
         console.log(fileName + " written.");
       })
-    )}
-  );
+    );
+  });
 
   fileWritePromiseFlag = true;
   Promise.all(promises)
@@ -200,7 +224,7 @@ var writeDirtyFilesTimer = setInterval(function() {
       dirty = [];
       fileWritePromiseFlag = false;
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(">> Error: " + err);
     });
 }, 1000);
@@ -217,4 +241,3 @@ Options:
   -s        Start the server to serve out the redfish API
 `);
 }
-

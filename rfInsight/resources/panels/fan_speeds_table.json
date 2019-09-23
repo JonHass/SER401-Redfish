@@ -1,0 +1,267 @@
+{
+  "columns": [],
+  "datasource": null,
+  "fontSize": "100%",
+  "gridPos": {
+    "h": 7,
+    "w": 12,
+    "x": 12,
+    "y": 14
+  },
+  "id": 21,
+  "links": [],
+  "pageSize": null,
+  "scroll": true,
+  "showHeader": true,
+  "sort": {
+    "col": 0,
+    "desc": true
+  },
+  "styles": [
+    {
+      "alias": "Time",
+      "dateFormat": "YYYY-MM-DD HH:mm:ss",
+      "pattern": "Time",
+      "type": "date"
+    },
+    {
+      "alias": "",
+      "colorMode": "cell",
+      "colors": ["rgba(245, 54, 54, 0.9)", "#629e51", "#890f02"],
+      "dateFormat": "YYYY-MM-DD HH:mm:ss",
+      "decimals": 2,
+      "mappingType": 1,
+      "pattern": "/.*/",
+      "thresholds": ["3300", "7000"],
+      "type": "number",
+      "unit": "short"
+    }
+  ],
+  "targets": [
+    {
+      "alias": "Fan 1A",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "FanInventory",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "A",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["CurrentReading"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "0x17||Fan.Embedded.1A"
+        }
+      ]
+    },
+    {
+      "alias": "Fan 1B",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "FanInventory",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "B",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["CurrentReading"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "0x17||Fan.Embedded.1B"
+        }
+      ]
+    },
+    {
+      "alias": "Fan 2",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "FanInventory",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "C",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["CurrentReading"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "0x17||Fan.Embedded.2"
+        }
+      ]
+    },
+    {
+      "alias": "Fan 3",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "FanInventory",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "D",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["CurrentReading"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "0x17||Fan.Embedded.3"
+        }
+      ]
+    },
+    {
+      "alias": "Fan 4",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "FanInventory",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "E",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["CurrentReading"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "0x17||Fan.Embedded.4"
+        }
+      ]
+    },
+    {
+      "alias": "Fan 5A",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "FanInventory",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "F",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["CurrentReading"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "0x17||Fan.Embedded.5A"
+        }
+      ]
+    }
+  ],
+  "title": "Fan Speeds",
+  "transform": "timeseries_to_columns",
+  "type": "table"
+}

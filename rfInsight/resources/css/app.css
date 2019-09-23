@@ -240,7 +240,7 @@ p {
    left: 10px;
    z-index: 1;
    overflow-x: hidden;
-   width: 150px;
+   width: 200px;
    position: relative;
 }
 
@@ -445,4 +445,12 @@ body {
 .table_container {
    position: absolute;
    top: 200px;
+}
+
+.dropdownText {
+   white-space: nowrap;
+}
+
+.arrow-lightInfo {
+   background-color: #212121;
 }

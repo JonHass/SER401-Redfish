@@ -1,18 +1,49 @@
 {
-  "enabledReports": ["ThermalStatus"],
-  "selections": [
-    {
-      "from": "ThermalStatus",
-      "metrics": [
-        "Reading",
-        "Health",
-        "UpperCriticalThreshold",
-        "UpperNonCriticalThreshold",
-        "LowerCriticalThreshold",
-        "LowerNonCriticalThreshold"
-      ]
-    }
-  ],
-  "sub_method": "sub",
-  "host": "localhost"
+   "enabledReports": [
+      "ThermalStatus",
+      "FanStatus",
+      "FanInventory",
+      "PSUInventory",
+      "PSUStatus"
+   ],
+   "selections": [
+      {
+         "from": "ThermalStatus",
+         "metrics": [
+            "Reading",
+            "LowerNonCriticalThreshold",
+            "LowerCriticalThreshold",
+            "UpperCriticalThreshold",
+            "UpperNonCriticalThreshold"
+         ]
+      },
+      {
+         "from": "FanStatus",
+         "metrics": [
+            "CurrentSpeedRPM"
+         ]
+      },
+      {
+         "from": "FanInventory",
+         "metrics": [
+            "PrimaryStatus",
+            "CurrentReading"
+         ]
+      },
+      {
+         "from": "PSUInventory",
+         "metrics": [
+            "EffectiveCapacity",
+            "TotalOutputPower"
+         ]
+      },
+      {
+         "from": "PSUStatus",
+         "metrics": [
+            "PrimaryStatus"
+         ]
+      }
+   ],
+   "sub_method": "sub",
+   "host": "localhost"
 }

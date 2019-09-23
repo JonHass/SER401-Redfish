@@ -1,3 +1,26 @@
+{{!-- {{
+Copyright 2018, 2019 Andrew Antes, Andrew Bossie, Justin Kistler,
+Wyatt Draggoo, Maigan Sedate
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+}} --}}
+
 <!DOCTYPE html>
 <html>
 
@@ -32,16 +55,15 @@
    <div class="sidenav">
       <h4>
          <i class="fas fa-plus"></i><a href="#" id="add" style="text-decoration: none;">
-            &nbsp;Add a panel...</a>
+            &nbsp;View panel(s)...</a>
       </h4>
       <ul class="dropdown">
-         <li value="panel1">Panel 1</li>
-         <li value="panel2">Panel 2</li>
-         <li value="panel3">Panel 3</li>
-         <li value="panel4">Panel 4</li>
-         <li value="panel5">Panel 5</li>
-         <li value="panel6">Panel 6</li>
-         <li value="showAll">Show All</li>
+         <li class="dropdownText" value="panel1">Thermal Status</li>
+         <li class="dropdownText" value="panel2">System Board Inlet Temp</li>
+         <li class="dropdownText" value="panel3">Thermal Table</li>
+         <li class="dropdownText" value="panel4">PSU Output Power</li>
+         <li class="dropdownText" value="panel5">Fan Speeds</li>
+         <li class="dropdownText" value="showAll">Show All</li>
       </ul>
    </div>
 
@@ -77,7 +99,7 @@
       menuOpened = !menuOpened;
       let menuId = menuOpened ? "menuSurface" : "menuSurfaceClosing";
       let overlayId = menuOpened ? "overlay" : "overlayClosing";
-      let menuHtml = 
+      let menuHtml =
          "<div id='" + menuId + "'>" +
             "<h1 class='menuTitle'>Menu</h1>" +
             "<div class='menuSeparator'></div>" +
@@ -87,7 +109,7 @@
             "<div class='menuSeparator'></div>" +
             "<a href='/datagenerator' class='menuLink'>Data Generator</a>" +
             "<div class='menuSeparator'></div>" +
-         "</div>" + 
+         "</div>" +
          "<div id='"+ overlayId +"' onclick='onMenuClick()'>"+
          "</div>";
       document.getElementById('menuContainer').innerHTML = menuHtml;
@@ -120,23 +142,20 @@
    }
 
    var panel1URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB";
+      "http://52.37.217.87:3000/d-solo/VIrfr66iz/metrics1?refresh=5s&panelId=2";
    var panel2URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA";
+      "http://52.37.217.87:3000/d-solo/VIrfr66iz/metrics1?refresh=5s&panelId=10";
    var panel3URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6";
+      "http://52.37.217.87:3000/d-solo/VIrfr66iz/metrics1?refresh=5s&panelId=12";
    var panel4URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB";
+      "http://52.37.217.87:3000/d-solo/VIrfr66iz/metrics1?refresh=5s&panelId=4";
    var panel5URL =
-      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1";
-   var panel6URL =
-      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1";
-   var panel1Label = "Static Grafana Panel 1";
-   var panel2Label = "Static Grafana Panel 2";
-   var panel3Label = "Static Grafana Panel 3";
-   var panel4Label = "Static Grafana Panel 4";
-   var panel5Label = "TestDash Custom Panel 1 (New Plugin)";
-   var panel6Label = "TestDash Custom Panel 2 (New Plugin)";
+      "http://52.37.217.87:3000/d-solo/VIrfr66iz/metrics1?refresh=5s&panelId=21";
+   var panel1Label = "Thermal Status";
+   var panel2Label = "System Board Inlet Temp";
+   var panel3Label = "Thermal Table";
+   var panel4Label = "PSU Output Power";
+   var panel5Label = "Fan Speeds";
 
    let getPanelData = (value) => {
       switch (value) {
@@ -150,7 +169,7 @@
                url: panel2URL + themeURLParam,
                label: panel2Label
             }
-            
+
 
          case 2:
             return {
@@ -169,12 +188,6 @@
                url: panel5URL + themeURLParam,
                label: panel5Label
             }
-
-         case 5:
-            return {
-               url: panel6URL + themeURLParam,
-               label: panel6Label
-            }
       }
       return {};
    }
@@ -190,14 +203,13 @@
       var url = panelData.url;
       var label = panelData.label;
 
-      if (value == 6) {
+      if (value == 5) {
          let urls = [
             panel1URL + themeURLParam,
             panel2URL + themeURLParam,
             panel3URL + themeURLParam,
             panel4URL + themeURLParam,
-            panel5URL + themeURLParam,
-            panel6URL + themeURLParam
+            panel5URL + themeURLParam
          ];
 
          let labels = [
@@ -205,10 +217,9 @@
             panel2Label,
             panel3Label,
             panel4Label,
-            panel5Label,
-            panel6Label
+            panel5Label
          ];
-         allAddedPanels = [0,1,2,3,4,5];
+         allAddedPanels = [0,1,2,3,4];
          let html = "";
 
          for (var index in urls) {
@@ -301,8 +312,8 @@
                "<h2 class='text'>" + panelData.label + "</h2>" +
                "<i class='fa fa-expand expand' id='"+ fullScreenPanel +"-expand'></i>" +
             "</div>";
-      html += '<div class="leftArrow"><i class="fa fa-3x fa-arrow-left arrow" id="'+ fullScreenPanel +'-arrow-left"></i></div>';
-      html += '<div class="rightArrow"><i class="fa fa-3x fa-arrow-right arrow" id="'+ fullScreenPanel +'-arrow-right"></i></div>'
+      html += '<div class="leftArrow arrow-' + themeClass + '"><i class="fa fa-3x fa-arrow-left arrow" id="'+ fullScreenPanel +'-arrow-left"></i></div>';
+      html += '<div class="rightArrow arrow-' + themeClass + '"><i class="fa fa-3x fa-arrow-right arrow" id="'+ fullScreenPanel +'-arrow-right"></i></div>'
       $(".main_container").append(html);
       $('body').addClass('noScroll');
    }

@@ -1,0 +1,155 @@
+{
+  "columns": [],
+  "datasource": "InfluxDB",
+  "fontSize": "100%",
+  "gridPos": {
+    "h": 9,
+    "w": 12,
+    "x": 12,
+    "y": 0
+  },
+  "id": 12,
+  "links": [],
+  "pageSize": null,
+  "scroll": true,
+  "showHeader": true,
+  "sort": {
+    "col": 0,
+    "desc": true
+  },
+  "styles": [
+    {
+      "alias": "Time",
+      "dateFormat": "YYYY-MM-DD HH:mm:ss",
+      "pattern": "Time",
+      "type": "date"
+    },
+    {
+      "alias": "",
+      "colorMode": "cell",
+      "colors": ["#ea6460", "#508642", "#bf1b00"],
+      "decimals": 2,
+      "pattern": "/.*/",
+      "thresholds": ["10", "80"],
+      "type": "number",
+      "unit": "short"
+    }
+  ],
+  "targets": [
+    {
+      "alias": "CPU 1 Temp",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "ThermalStatus",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "A",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["Reading"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "CPU1 Temp"
+        }
+      ]
+    },
+    {
+      "alias": "CPU 2 Temp",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "ThermalStatus",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "B",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["Reading"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "CPU2 Temp"
+        }
+      ]
+    },
+    {
+      "alias": "System Board Inlet Temp",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "ThermalStatus",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "C",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["Reading"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "System Board Inlet Temp"
+        }
+      ]
+    }
+  ],
+  "title": "Thermal Status",
+  "transform": "timeseries_to_columns",
+  "transparent": false,
+  "type": "table"
+}

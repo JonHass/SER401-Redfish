@@ -1,0 +1,189 @@
+{
+  "aliasColors": {},
+  "bars": false,
+  "dashLength": 10,
+  "dashes": false,
+  "datasource": "InfluxDB",
+  "fill": 1,
+  "gridPos": {
+    "h": 8,
+    "w": 11,
+    "x": 0,
+    "y": 0
+  },
+  "hideTimeOverride": false,
+  "id": 2,
+  "legend": {
+    "avg": false,
+    "current": true,
+    "max": false,
+    "min": false,
+    "show": true,
+    "total": false,
+    "values": true
+  },
+  "lines": true,
+  "linewidth": 3,
+  "links": [],
+  "nullPointMode": "connected",
+  "percentage": false,
+  "pointradius": 5,
+  "points": false,
+  "renderer": "flot",
+  "seriesOverrides": [],
+  "spaceLength": 10,
+  "stack": false,
+  "steppedLine": false,
+  "targets": [
+    {
+      "alias": "Temp Reading",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "ThermalStatus",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "A",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["Reading"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "CPU1 Temp"
+        }
+      ]
+    },
+    {
+      "alias": "Upper NonCritical Threshold",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "ThermalStatus",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "C",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["UpperNonCriticalThreshold"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "CPU1 Temp"
+        }
+      ]
+    },
+    {
+      "alias": "Lower NonCritical Threshold",
+      "groupBy": [
+        {
+          "params": ["$__interval"],
+          "type": "time"
+        },
+        {
+          "params": ["null"],
+          "type": "fill"
+        }
+      ],
+      "measurement": "ThermalStatus",
+      "orderByTime": "ASC",
+      "policy": "default",
+      "refId": "D",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": ["LowerNonCriticalThreshold"],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": [
+        {
+          "key": "MetricDefinition",
+          "operator": "=",
+          "value": "CPU1 Temp"
+        }
+      ]
+    }
+  ],
+  "thresholds": [],
+  "timeFrom": null,
+  "timeShift": null,
+  "title": "CPU Temperature vs. Upper NonCritical Threshold",
+  "tooltip": {
+    "shared": true,
+    "sort": 0,
+    "value_type": "individual"
+  },
+  "type": "graph",
+  "xaxis": {
+    "buckets": null,
+    "mode": "time",
+    "name": null,
+    "show": true,
+    "values": []
+  },
+  "yaxes": [
+    {
+      "format": "short",
+      "label": null,
+      "logBase": 1,
+      "max": "100",
+      "min": null,
+      "show": true
+    },
+    {
+      "format": "short",
+      "label": null,
+      "logBase": 1,
+      "max": null,
+      "min": null,
+      "show": true
+    }
+  ],
+  "yaxis": {
+    "align": false,
+    "alignLevel": null
+  }
+}

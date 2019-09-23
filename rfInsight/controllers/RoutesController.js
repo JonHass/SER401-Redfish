@@ -1,3 +1,26 @@
+/*
+* Copyright 2018, 2019 Andrew Antes, Andrew Bossie, Justin Kistler,
+* Wyatt Draggoo, Maigan Sedate
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
+
 const request = require("request");
 const fs = require("fs");
 const _ = require("lodash");
@@ -5,10 +28,15 @@ const Influx = require("influx");
 
 const childProcess = require("child_process");
 const config = require("../config/config");
+
+const PFuncs = require("../../rfModeller/PatternFuncs");
+
 var generatorProcess = { process: null, perc: 0 }; //Global reference to generator child process
 
 let influx = require("./InfluxController").influx;
 let util = require("../resources/js/util");
+
+let selections = require("../metrics_config.json");
 
 let options = {
   host: "http://127.0.0.1:8001",
@@ -51,11 +79,20 @@ exports.getDefinitionCollection = function(req, res) {
   );
 };
 
+exports.getLanding = function(req, res) {
+  res.render("landing.hbs", {
+    pageTitle: "Redfish Insight"
+  });
+};
+
 // Currently being used for the landing page.
 exports.getAvailableMetrics = function(req, res) {
+  var host = decodeURIComponent(req.params.host);
+  // console.log(host);
   request(
     {
-      url: def_path,
+      url: `${host}${options.redfish_defs}`,
+      //   url: def_path,
       json: true
     },
     (error, response, body) => {
@@ -73,10 +110,7 @@ exports.getAvailableMetrics = function(req, res) {
           metrics.push(uri.substr(53, uri.length));
         }
         // console.log(metrics);
-        res.render("landing.hbs", {
-          pageTitle: "Redfish Insight",
-          metrics: metrics
-        });
+        res.json(metrics);
       }
     }
   );
@@ -206,7 +240,25 @@ exports.postSelectedMetrics = function(req, res) {
       // patchMetricToEnabled(key);
     });
     // TODO FIX UPDATECONFIG
-    // updateConfig(selectedMetrics.payload);
+    updateConfig(selectedMetrics.payload);
+
+    res.json(selectedMetrics);
+  } else {
+    res.json({
+      error: "Bad Format"
+    });
+  }
+};
+
+exports.save = function(req, res) {
+  console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
+  let selectedMetrics = req.body;
+  if (!_.isEmpty(selectedMetrics.payload)) {
+    console.log(selectedMetrics.payload);
+    _.forOwn(selectedMetrics.payload, (val, key) => {
+      // patchMetricToEnabled(key);
+    });
+    updateConfig(selectedMetrics.payload);
 
     res.json(selectedMetrics);
   } else {
@@ -217,19 +269,30 @@ exports.postSelectedMetrics = function(req, res) {
 };
 
 const updateConfig = newSelection => {
+  let requested = JSON.parse(newSelection);
   fs.readFile("metrics_config.json", "utf8", (err, data) => {
     if (err) {
       throw err;
     } else {
       configData = JSON.parse(data);
-      _.forOwn(newSelection, (val, key) => {
-        !configData.enabledReports.includes(key) &&
-          configData.enabledReports.push(key) &&
-          configData.selections.push({
-            from: key,
-            metrics: val
-          });
-      });
+      configData.enabledReports = [];
+      configData.selections = [];
+      for (var key in requested) {
+        if (requested.hasOwnProperty(key)) {
+          temp_obj = {
+            from: "",
+            metrics: []
+          };
+          // Update enabled reports
+          configData.enabledReports.push(key);
+          temp_obj.from = key;
+          for (var i = 0; i < requested[key].length; i++) {
+            temp_obj.metrics.push(requested[key][i]);
+          }
+          configData.selections.push(temp_obj);
+        }
+      }
+
       fs.writeFile(
         "metrics_config.json",
         JSON.stringify(configData, undefined, 3),
@@ -276,31 +339,52 @@ exports.handleEventIn = function(req, res) {
   console.log(res.req.body);
   let mr = res.req.body;
   let values = mr.MetricValues;
+
   for (var i = 0; i < values.length; i++) {
     // This date arithmetic needs to be then + (now - then)
     now = new Date();
     then = new Date(values[i].Timestamp);
     offset = Math.abs(now.getTime() - then.getTime());
     input = new Date(then.getTime() + offset);
-    influx
-      .writePoints(
-        [
+
+    // If the user has selected a particular metric, write it to Influx.
+    if (isSelected(mr.Id, values[i].MetricId)) {
+      influx
+        .writePoints(
+          [
+            {
+              measurement: mr.Id,
+              tags: { MetricDefinition: values[i].MetricDefinition },
+              fields: { [values[i].MetricId]: values[i].MetricValue },
+              timestamp: input
+            }
+          ],
           {
-            measurement: mr.Id,
-            tags: { MetricDefinition: values[i].MetricDefinition },
-            fields: { [values[i].MetricId]: values[i].MetricValue },
-            timestamp: input
+            database: "metrics",
+            precision: "s"
           }
-        ],
-        {
-          database: "metrics",
-          precision: "s"
-        }
-      )
-      .catch(err => {
-        console.error(`Error writing data to Influx. ${err.stack}`);
-      });
+        )
+        .catch(err => {
+          console.error(`Error writing data to Influx. ${err.stack}`);
+        });
+    }
   }
+};
+
+const isSelected = (definition, metric) => {
+  delete require.cache[require.resolve("../metrics_config.json")];
+  selections = require("../metrics_config.json");
+  report_enabled = selections.enabledReports.includes(definition);
+  metric_selected = null;
+  allSelections = selections.selections;
+  for (var i = 0; i < allSelections.length; i++) {
+    if (allSelections[i].from == definition) {
+      if (allSelections[i].metrics.includes(metric)) {
+        metric_selected = true;
+      }
+    }
+  }
+  return report_enabled && metric_selected;
 };
 
 const subscribeToEvents = () => {
@@ -366,16 +450,31 @@ exports.getModellerConfig = function(req, res) {
   });
 };
 
+exports.getModellerPatterns = function(req, res) {
+  let modellerPatterns;
+
+  let p = new PFuncs();
+
+  modellerPatterns = p.patternList;
+
+  res.json(modellerPatterns);
+};
+
 exports.postModellerConfig = function(req, res) {
-  let modellerConfig = JSON.parse(data);
+  console.log(`Modeller Config: ${JSON.stringify(req.body, undefined, 2)}`);
+  let modellerConfig = req.body;
 
   fs.writeFile(
     "../rfModeller/config.json",
-    modellerConfig,
+    JSON.stringify(modellerConfig, null, 2),
     "utf8",
     (err, data) => {
       if (err) {
-        console.log(err);
+        res.json({
+          error: "Could not retrieve metrics: err"
+        });
+      } else {
+        res.json(modellerConfig);
       }
     }
   );
